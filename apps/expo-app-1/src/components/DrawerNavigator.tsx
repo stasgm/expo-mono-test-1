@@ -9,6 +9,12 @@ const Drawer = createDrawerNavigator<RootDrawerParamList>();
 
 const baseNavList: INavItem[] = [
   {
+    name: 'Todo',
+    component: TodoNavigator,
+    icon: 'check-box-outline',
+    title: 'Todo',
+  },
+  {
     name: 'App',
     component: AppNavigator,
     icon: 'file-cabinet',
@@ -26,12 +32,6 @@ const baseNavList: INavItem[] = [
     icon: 'file-document',
     title: 'Documents',
   },
-  {
-    name: 'Todo',
-    component: TodoNavigator,
-    icon: 'check-box-outline',
-    title: 'Todo',
-  },
 ];
 
 const DrawerNavigator = () => {
@@ -39,7 +39,7 @@ const DrawerNavigator = () => {
 
   return (
     <Drawer.Navigator
-      defaultStatus="open"
+      defaultStatus="closed"
       screenOptions={{
         headerShown: true,
         overlayColor: 'transparent',

@@ -8,11 +8,6 @@ export interface IErrorMessage {
   message?: string[];
 }
 
-export interface IErrorMessage {
-  error: string;
-  message?: string[];
-}
-
 export interface IApiErrorResponse extends IApiResponse<IErrorMessage> {
   success: false;
 }

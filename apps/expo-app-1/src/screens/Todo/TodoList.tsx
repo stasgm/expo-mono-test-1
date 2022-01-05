@@ -12,55 +12,39 @@ import {
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
-import { addTodos, removeTodo, removeTodos, setTodoStatus, Todo, TodoStatus } from '../../store/todos';
+import { fetchTodos, removeTodo, removeTodos, selectLoading, setTodoStatus, Todo, TodoStatus } from '../../store/todos';
 import { TodoScreenNavigationProp } from '../../navigation/TodoStack';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { deviceWidth, theme } from '../../constants/constants';
-import { todosApi } from '../../services/api/todos';
 
 const TodoList = () => {
   const navigation = useNavigation<TodoScreenNavigationProp>();
 
-  const [loading, setLoading] = useState(false);
-
   const dispatch = useAppDispatch();
-  const todos = useAppSelector((state) => state.todos);
+  const list = useAppSelector((state) => state.todos.list);
+  const loading = useAppSelector(selectLoading);
 
   const toggleTaskStatus = (item: Todo) => {
     const status =
       item.status == TodoStatus.OPEN
         ? TodoStatus.IN_PROGRESS
         : item.status === TodoStatus.IN_PROGRESS
-        ? TodoStatus.DONE
-        : TodoStatus.OPEN;
+          ? TodoStatus.DONE
+          : TodoStatus.OPEN;
     dispatch(setTodoStatus({ id: item.id, status }));
   };
   const deleteTask = (item: Todo) => dispatch(removeTodo(item.id));
   const deleteTasks = () => dispatch(removeTodos());
-  const fetchData = async () => {
-    // dispatch({ type: 'FETCH_INIT' });
-    setLoading(true);
-    try {
-      const result = await todosApi.getAll();
-      // console.log('result', result);
-      if (result.success) {
-        dispatch(addTodos(result.data));
-      }
-    } catch (error) {
-      // dispatch({ type: 'FETCH_FAILURE' });
-    } finally {
-      setLoading(false);
-    }
-  };
+  const fetchData = async () => dispatch(fetchTodos());
 
   useEffect(() => {
     fetchData();
-  });
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={todos}
+        data={list}
         keyExtractor={(_, index) => index.toString()}
         refreshControl={<RefreshControl refreshing={loading} title="Loading..." />}
         ItemSeparatorComponent={() => <View style={{ borderBottomWidth: StyleSheet.hairlineWidth }} />}
@@ -72,16 +56,16 @@ const TodoList = () => {
                   item.status === TodoStatus.DONE
                     ? 'check-circle'
                     : item.status === TodoStatus.IN_PROGRESS
-                    ? 'radio-button-on'
-                    : 'radio-button-unchecked'
+                      ? 'radio-button-on'
+                      : 'radio-button-unchecked'
                 }
                 size={30}
                 color={
                   item.status === TodoStatus.DONE
                     ? '#28a745'
                     : item.status === TodoStatus.IN_PROGRESS
-                    ? '#0035dd'
-                    : '#dc3545'
+                      ? '#0035dd'
+                      : '#dc3545'
                 }
               />
               <Text style={[styles.todoItemText, item.status === TodoStatus.DONE ? styles.todoItemDone : null]}>
@@ -100,15 +84,15 @@ const TodoList = () => {
         )}
       />
       <View style={styles.innerContainer}>
-        <TouchableOpacity style={styles.buttonContainer} onPress={fetchData}>
+        <TouchableOpacity style={styles.buttonContainer} onPress={fetchData} disabled={loading}>
           <AntDesign name="sync" size={24} color="white" />
           <Text style={styles.buttonText}>Load from server</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonContainer} onPress={deleteTasks}>
+        <TouchableOpacity style={styles.buttonContainer} onPress={deleteTasks} disabled={loading}>
           <AntDesign name="delete" size={24} color="white" />
           <Text style={styles.buttonText}>Delete todos</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonContainer} onPress={() => navigation.navigate('TodoAdd')}>
+        <TouchableOpacity style={styles.buttonContainer} onPress={() => navigation.navigate('TodoAdd')} disabled={loading}>
           <AntDesign name="plus" size={24} color="white" />
           <Text style={styles.buttonText}>Add new todo</Text>
         </TouchableOpacity>

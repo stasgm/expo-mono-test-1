@@ -14,16 +14,18 @@ const TodoAdd = () => {
 
   const dispatch = useAppDispatch();
 
-  const [value, onChangeText] = useState('');
+  const [title, onChangeTitle] = useState('');
+  const [description, onChangeDescription] = useState('');
 
-  const addTodoItem = (value: string) => {
-    if (!value) {
+  const addTodoItem = () => {
+    if (!title) {
       return;
     }
 
-    dispatch(addTodo(value));
+    dispatch(addTodo(title, description));
 
-    onChangeText('');
+    onChangeTitle('');
+    onChangeDescription('');
 
     navigation.navigate('TodoList');
   };
@@ -31,8 +33,15 @@ const TodoAdd = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.innerContainer}>
-        <TextInput style={styles.textInput} onChangeText={onChangeText} value={value} placeholder="Add a task to do" />
-        <TouchableOpacity style={styles.buttonContainer} onPress={() => addTodoItem(value)}>
+        <View style={styles.inputContainer}>
+          <Text style={styles.textCaption}>Title:</Text>
+          <TextInput style={styles.textInput} onChangeText={onChangeTitle} value={title} placeholder='Title' />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.textCaption}>Description:</Text>
+          <TextInput style={styles.textInput} onChangeText={onChangeDescription} value={description} placeholder='Description' />
+        </View>
+        <TouchableOpacity style={styles.buttonContainer} onPress={addTodoItem}>
           <AntDesign name="plus" size={24} color="white" />
           <Text style={styles.buttonText}>Add task</Text>
         </TouchableOpacity>
@@ -64,15 +73,29 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 20,
   },
+  text: {
+    color: theme.text,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  inputContainer: {
+    width: '100%',
+    flexDirection: 'column',
+  },
   textInput: {
+    marginVertical: 5,
     height: 50,
     width: '100%',
     borderColor: theme.border,
     borderWidth: 1,
-    borderBottomLeftRadius: 8,
-    borderTopLeftRadius: 8,
+    borderRadius: 8,
     paddingLeft: 10,
     fontSize: 17,
+  },
+  textCaption: {
+    marginHorizontal: 5,
+    marginVertical: 5,
+    textTransform: 'uppercase',
   },
   buttonContainer: {
     margin: 10,

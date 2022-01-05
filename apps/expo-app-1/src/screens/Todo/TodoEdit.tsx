@@ -19,12 +19,11 @@ const TodoEdit = () => {
   const index = route.params.id;
 
   const dispatch = useAppDispatch();
-  const todos = useAppSelector((state) => state.todos);
-  const taskToUpdate = todos.find((todo) => todo.id === index);
+  const list = useAppSelector((state) => state.todos.list);
+  const taskToUpdate = list.find((todo) => todo.id === index);
 
   const [title, onChangeTitle] = useState(taskToUpdate?.title);
   const [description, onChangeDescription] = useState(taskToUpdate?.description || '');
-  onChangeDescription;
 
   const updateTodoItem = () => {
     if (!title || !taskToUpdate) {
@@ -52,8 +51,14 @@ const TodoEdit = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.innerContainer}>
-        <TextInput style={styles.textInput} onChangeText={onChangeTitle} value={title} />
-        <TextInput style={styles.textInput} onChangeText={onChangeDescription} value={description} />
+        <View style={styles.inputContainer}>
+          <Text style={styles.textCaption}>Title:</Text>
+          <TextInput style={styles.textInput} onChangeText={onChangeTitle} value={title} placeholder='Title' />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.textCaption}>Description:</Text>
+          <TextInput style={styles.textInput} onChangeText={onChangeDescription} value={description} placeholder='Description' />
+        </View>
         <TouchableOpacity style={styles.buttonContainer} onPress={updateTodoItem}>
           <AntDesign name="save" size={24} color="white" />
           <Text style={styles.buttonText}>Update task</Text>
@@ -95,8 +100,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
+  inputContainer: {
+    width: '100%',
+    flexDirection: 'column',
+  },
   textInput: {
-    margin: 5,
+    marginVertical: 5,
     height: 50,
     width: '100%',
     borderColor: theme.border,
@@ -104,6 +113,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingLeft: 10,
     fontSize: 17,
+  },
+  textCaption: {
+    marginHorizontal: 5,
+    marginVertical: 5,
+    textTransform: 'uppercase',
   },
   buttonContainer: {
     margin: 10,

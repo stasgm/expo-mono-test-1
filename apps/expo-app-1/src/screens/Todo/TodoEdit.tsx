@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import { StyleSheet, View, Text, TouchableOpacity, TextInput, SafeAreaView, Dimensions } from 'react-native'
+import React, { useState } from 'react';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { StyleSheet, View, Text, TouchableOpacity, TextInput, SafeAreaView, Dimensions } from 'react-native';
 
-import { TodoScreenNavigationProp } from '../../navigation/TodoStack'
-import { TodoStackParamList } from '../../navigation/types'
-import { useAppDispatch, useAppSelector } from '../../store'
-import { editTodo } from '../../store/todos'
-import { AntDesign } from '@expo/vector-icons'
+import { TodoScreenNavigationProp } from '../../navigation/TodoStack';
+import { TodoStackParamList } from '../../navigation/types';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { editTodo, removeTodo } from '../../store/todos';
+import { AntDesign } from '@expo/vector-icons';
+import { theme } from '../../constants/constants';
 
 const { width } = Dimensions.get('window');
 
@@ -17,52 +18,60 @@ const TodoEdit = () => {
   const route = useRoute<ProfileScreenRouteProp>();
   const index = route.params.id;
 
-  const dispatch = useAppDispatch()
-  const todos = useAppSelector(state => state.todos);
-  const taskToUpdate = todos.find(todo => todo.id === index)!;
+  const dispatch = useAppDispatch();
+  const todos = useAppSelector((state) => state.todos);
+  const taskToUpdate = todos.find((todo) => todo.id === index);
 
-  const [value, onChangeText] = useState(taskToUpdate.description);
+  const [title, onChangeTitle] = useState(taskToUpdate?.title);
+  const [description, onChangeDescription] = useState(taskToUpdate?.description || '');
+  onChangeDescription;
 
   const updateTodoItem = () => {
-    if (!value) {
+    if (!title || !taskToUpdate) {
       return;
     }
 
-    dispatch(editTodo({ ...taskToUpdate, description: value }));
+    dispatch(editTodo({ ...taskToUpdate, description, title }));
 
-    onChangeText('');
+    onChangeTitle('');
+    onChangeDescription('');
 
     navigation.navigate('TodoList');
-  }
+  };
+
+  const deleteTodoItem = () => {
+    if (!taskToUpdate) {
+      return;
+    }
+
+    dispatch(removeTodo(taskToUpdate.id));
+
+    navigation.navigate('TodoList');
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.innerContainer}>
-        <TextInput
-          style={styles.textInput}
-          onChangeText={onChangeText}
-          value={value}
-        />
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={updateTodoItem}
-        >
+        <TextInput style={styles.textInput} onChangeText={onChangeTitle} value={title} />
+        <TextInput style={styles.textInput} onChangeText={onChangeDescription} value={description} />
+        <TouchableOpacity style={styles.buttonContainer} onPress={updateTodoItem}>
           <AntDesign name="save" size={24} color="white" />
           <Text style={styles.buttonText}>Update task</Text>
-        </TouchableOpacity>        
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.buttonContainer} onPress={deleteTodoItem}>
+          <AntDesign name="delete" size={24} color="white" />
+          <Text style={styles.buttonText}>Delete task</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.innerContainer}>
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={() => navigation.navigate('TodoList')}
-        >
+        <TouchableOpacity style={styles.buttonContainer} onPress={() => navigation.navigate('TodoList')}>
           <AntDesign name="arrowleft" size={24} color="white" />
           <Text style={styles.buttonText}>Back to List</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -82,23 +91,23 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   text: {
-    color: '#101010',
+    color: theme.text,
     fontSize: 20,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   textInput: {
+    margin: 5,
     height: 50,
     width: '100%',
-    borderColor: '#ccc',
+    borderColor: theme.border,
     borderWidth: 1,
-    borderBottomLeftRadius: 8,
-    borderTopLeftRadius: 8,
+    borderRadius: 8,
     paddingLeft: 10,
     fontSize: 17,
   },
   buttonContainer: {
     margin: 10,
-    backgroundColor: '#222',
+    backgroundColor: theme.background,
     borderRadius: 8,
     justifyContent: 'center',
     flexDirection: 'row',
@@ -109,8 +118,8 @@ const styles = StyleSheet.create({
   buttonText: {
     margin: 10,
     fontSize: 15,
-    color: '#fff'
-  }
-})
+    color: theme.lightText,
+  },
+});
 
 export default TodoEdit;

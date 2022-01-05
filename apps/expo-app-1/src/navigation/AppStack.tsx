@@ -9,12 +9,7 @@ const Stack = createStackNavigator<AppStackParamList>();
 const AppNavigator = () => {
   return (
     <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
-      <Stack.Screen
-        key="Home"
-        name="Home"
-        component={HomeScreen}
-        options={{ title: 'Home' }}
-      />      
+      <Stack.Screen key="Home" name="Home" component={HomeScreen} options={{ title: 'Home' }} />
     </Stack.Navigator>
   );
 };

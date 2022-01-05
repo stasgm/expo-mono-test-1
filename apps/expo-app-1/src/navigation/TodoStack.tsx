@@ -11,28 +11,12 @@ const Stack = createStackNavigator<TodoStackParamList>();
 const TodoNavigator = () => {
   return (
     <Stack.Navigator initialRouteName="TodoList" screenOptions={{ headerShown: false }}>
-      <Stack.Screen
-        key="To"
-        name="TodoList"
-        component={TodoList}
-        options={{ title: 'Todo list' }}
-      />
-      <Stack.Screen
-        key="TodoAdd"
-        name="TodoAdd"
-        component={TodoAdd}
-        options={{ title: 'Todo add' }}
-      />
-      <Stack.Screen
-        key="To"
-        name="TodoEdit"
-        component={TodoEdit}
-        options={{ title: 'Todo edit' }}
-      />
+      <Stack.Screen key="To" name="TodoList" component={TodoList} options={{ title: 'Todo list' }} />
+      <Stack.Screen key="TodoAdd" name="TodoAdd" component={TodoAdd} options={{ title: 'Todo add' }} />
+      <Stack.Screen key="To" name="TodoEdit" component={TodoEdit} options={{ title: 'Todo edit' }} />
     </Stack.Navigator>
   );
 };
-
 
 export type TodoScreenNavigationProp = StackNavigationProp<TodoStackParamList>;
 

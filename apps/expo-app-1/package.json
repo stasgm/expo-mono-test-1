@@ -2,20 +2,27 @@
   "name": "@apps/expo-app-1",
   "version": "1.0.0",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts*\"",
+    "lint:fix": "eslint --fix \"{src,apps,libs,test}/**/*.ts*\"",
+    "prettier:check": "prettier --check \"src/**/*.ts*\"",
+    "prettier:fix": "prettier --write \"src/**/*.ts*\""
   },
   "dependencies": {
+    "@babel/preset-env": "^7.16.7",
     "@expo/vector-icons": "^12.0.0",
     "@react-navigation/drawer": "^6.1.8",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/stack": "^6.0.11",
     "@reduxjs/toolkit": "^1.7.1",
-    "expo": "~44.0.0",
+    "axios": "^0.24.0",
+    "expo": "~44.0.4",
     "expo-font": "~10.0.4",
     "expo-status-bar": "~1.2.0",
     "react": "17.0.1",
@@ -31,12 +38,24 @@
     "uuidv4": "^6.2.12"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9",
     "@libs/hello": "*",
-    "@react-navigation/devtools": "^6.0.4",
+    "@config/prettier-config": "*",
+    "@config/eslint-config": "*",
+    "@config/eslint-config-react-native": "*",
+    "@babel/core": "^7.12.9",
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.64.12",
-    "typescript": "~4.3.5"
+    "typescript": "^4.3.5"
   },
-  "private": true
+  "lint-staged": {
+    "*.+(ts|tsx)": [
+      "yarn prettier:fix",
+      "yarn lint"
+    ],
+    "package.json": [
+      "yarn prettier:fix",
+      "yarn sort-package-json"
+    ]
+  },
+  "prettier": "@config/prettier-config"
 }

@@ -9,11 +9,7 @@ const Stack = createStackNavigator<MapStackParamList>();
 const MapNavigator = () => {
   return (
     <Stack.Navigator initialRouteName="MapView" screenOptions={{ headerShown: false }}>
-      <Stack.Screen
-        key="MapView"
-        name="MapView"
-        component={MapViewScreen}
-      />
+      <Stack.Screen key="MapView" name="MapView" component={MapViewScreen} />
     </Stack.Navigator>
   );
 };

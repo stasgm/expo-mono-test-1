@@ -7,6 +7,39 @@
   "private": true,
   "workspaces": [
     "apps/*",
-    "packages/*"
-  ]
+    "packages/*",
+    "configs/*"
+  ],
+  "scripts": {
+    "app:expo": "lerna run --scope=@apps/@apps/expo-app-1 expo:start --stream",
+    "clean": "lerna clean",
+    "clean:all": "yarn clean:node-modules && yarn clean:expo-cache && yarn clean:dist",
+    "clean:dist": "rimraf packages/*/dist && rimraf apps/*/dist && apps/*/build && rimraf configs/*/dist",
+    "clean:expo-cache": "rimraf apps/*/.expo packages/*/.expo",
+    "clean:node-modules": "rimraf node_modules && rimraf apps/*/node_modules && rimraf packages/*/node_modules && rimraf configs/*/node_modules",
+    "postinstall": "patch-package && husky install",
+    "lerna": "lerna bootstrap",
+    "lint": "lerna run --scope=@lib/* --scope=@apps/* lint --stream",
+    "lint-staged-project": "lerna run --scope=@lib/* --scope=@apps/* --concurrency 1 --stream precommit --since HEAD --exclude-dependents",
+    "lint:fix": "lerna run --scope=@lib/* --scope=@apps/* lint:fix --stream",
+    "prepare": "husky install",
+    "prettier:fix": "lerna run --scope=@lib/* --scope=@apps/* prettier:fix --stream",
+    "update": "yarn upgrade-interactive --latest"
+  },
+  "lint-staged": {
+    "package.json": [
+      "yarn prettier:fix",
+      "yarn sort-package-json"
+    ]
+  },
+  "prettier": "@config/prettier-config",
+  "devDependencies": {
+    "@config/prettier-config": "*",
+    "concurrently": "^7.0.0",
+    "husky": "^7.0.4",
+    "lerna": "^4.0.0",
+    "lint-staged": "^12.1.5",
+    "patch-package": "^6.4.7",
+    "sort-package-json": "1.53.1"
+  }
 }

@@ -12,8 +12,4 @@ type TodoStackParamList = {
   TodoEdit: { id: string };
 };
 
-export {
-  AppStackParamList,
-  MapStackParamList,
-  TodoStackParamList
-};
+export { AppStackParamList, MapStackParamList, TodoStackParamList };

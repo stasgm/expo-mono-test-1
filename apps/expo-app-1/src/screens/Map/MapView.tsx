@@ -6,7 +6,7 @@ export const MapViewScreen = () => {
       <Text>There will be a map</Text>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

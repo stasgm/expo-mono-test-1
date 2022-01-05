@@ -7,7 +7,6 @@ import {
 } from '@react-navigation/drawer';
 import Animated, { Adaptable } from 'react-native-reanimated';
 
-
 export function DrawerContent({ ...props }: DrawerContentComponentProps) {
   const progress = useDrawerProgress() as Adaptable<number>;
 
@@ -23,7 +22,7 @@ export function DrawerContent({ ...props }: DrawerContentComponentProps) {
           style={[
             styles.drawerContent,
             {
-              transform: [{ translateX }]
+              transform: [{ translateX }],
             },
           ]}
         >

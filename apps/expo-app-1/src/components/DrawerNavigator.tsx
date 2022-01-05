@@ -3,6 +3,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { INavItem, RootDrawerParamList } from './types';
 import { DrawerContent } from './drawerContent';
 import { AppNavigator, MapNavigator, TodoNavigator } from '../navigation';
+import { theme } from '../constants/constants';
 
 const Drawer = createDrawerNavigator<RootDrawerParamList>();
 
@@ -30,7 +31,7 @@ const baseNavList: INavItem[] = [
     component: TodoNavigator,
     icon: 'check-box-outline',
     title: 'Todo',
-  },  
+  },
 ];
 
 const DrawerNavigator = () => {
@@ -42,12 +43,12 @@ const DrawerNavigator = () => {
       screenOptions={{
         headerShown: true,
         overlayColor: 'transparent',
-        drawerStyle: {          
-          backgroundColor: '#465775',          
+        drawerStyle: {
+          backgroundColor: theme.background,
         },
         // drawerActiveBackgroundColor: '#F4F6FB',
-        drawerActiveTintColor: '#F4F7FB',
-        drawerInactiveTintColor: '#ADB6C4',
+        drawerActiveTintColor: theme.active,
+        drawerInactiveTintColor: theme.inactive,
         drawerLabelStyle: {
           marginLeft: -25,
           fontSize: 15,

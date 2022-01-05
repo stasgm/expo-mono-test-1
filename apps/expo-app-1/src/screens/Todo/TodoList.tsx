@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -6,44 +7,86 @@ import {
   FlatList,
   SafeAreaView,
   StatusBar,
-  Dimensions
-} from 'react-native'
-import { AntDesign, MaterialIcons } from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native'
+  RefreshControl,
+} from 'react-native';
+import { AntDesign, MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
-import { removeTodo, setTodoStatus, Todo } from '../../store/todos'
-import { TodoScreenNavigationProp } from '../../navigation/TodoStack'
-import { useAppDispatch, useAppSelector } from '../../store'
-
-const { width } = Dimensions.get('window');
+import { addTodos, removeTodo, removeTodos, setTodoStatus, Todo, TodoStatus } from '../../store/todos';
+import { TodoScreenNavigationProp } from '../../navigation/TodoStack';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { deviceWidth, theme } from '../../constants/constants';
+import { todosApi } from '../../services/api/todos';
 
 const TodoList = () => {
   const navigation = useNavigation<TodoScreenNavigationProp>();
 
-  const dispatch = useAppDispatch()
+  const [loading, setLoading] = useState(false);
 
-  const todos = useAppSelector(state => state.todos);
+  const dispatch = useAppDispatch();
+  const todos = useAppSelector((state) => state.todos);
 
   const toggleTaskStatus = (item: Todo) => {
-    dispatch(setTodoStatus({ id: item.id, completed: !item.completed }))
-  }
-
+    const status =
+      item.status == TodoStatus.OPEN
+        ? TodoStatus.IN_PROGRESS
+        : item.status === TodoStatus.IN_PROGRESS
+        ? TodoStatus.DONE
+        : TodoStatus.OPEN;
+    dispatch(setTodoStatus({ id: item.id, status }));
+  };
   const deleteTask = (item: Todo) => dispatch(removeTodo(item.id));
+  const deleteTasks = () => dispatch(removeTodos());
+  const fetchData = async () => {
+    // dispatch({ type: 'FETCH_INIT' });
+    setLoading(true);
+    try {
+      const result = await todosApi.getAll();
+      // console.log('result', result);
+      if (result.success) {
+        dispatch(addTodos(result.data));
+      }
+    } catch (error) {
+      // dispatch({ type: 'FETCH_FAILURE' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  });
 
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
         data={todos}
         keyExtractor={(_, index) => index.toString()}
-        renderItem={({ item }) =>
+        refreshControl={<RefreshControl refreshing={loading} title="Loading..." />}
+        ItemSeparatorComponent={() => <View style={{ borderBottomWidth: StyleSheet.hairlineWidth }} />}
+        renderItem={({ item }) => (
           <View style={styles.todoItem}>
             <TouchableOpacity onPress={() => toggleTaskStatus(item)} style={styles.todoDescription}>
               <MaterialIcons
-                name={item.completed ? 'check-circle' : 'radio-button-unchecked'}
+                name={
+                  item.status === TodoStatus.DONE
+                    ? 'check-circle'
+                    : item.status === TodoStatus.IN_PROGRESS
+                    ? 'radio-button-on'
+                    : 'radio-button-unchecked'
+                }
                 size={30}
-                color={item.completed ? '#28a745' : '#dc3545'}
+                color={
+                  item.status === TodoStatus.DONE
+                    ? '#28a745'
+                    : item.status === TodoStatus.IN_PROGRESS
+                    ? '#0035dd'
+                    : '#dc3545'
+                }
               />
-              <Text style={[styles.todoItemText, item.completed ? styles.todoItemDone : null]}>{item.description}</Text>
+              <Text style={[styles.todoItemText, item.status === TodoStatus.DONE ? styles.todoItemDone : null]}>
+                {item.title}
+              </Text>
             </TouchableOpacity>
             <View style={styles.itemButtonsContainer}>
               <TouchableOpacity onPress={() => navigation.navigate('TodoEdit', { id: item.id })}>
@@ -54,20 +97,25 @@ const TodoList = () => {
               </TouchableOpacity>
             </View>
           </View>
-        }
+        )}
       />
       <View style={styles.innerContainer}>
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={() => navigation.navigate('TodoAdd')}
-        >
+        <TouchableOpacity style={styles.buttonContainer} onPress={fetchData}>
+          <AntDesign name="sync" size={24} color="white" />
+          <Text style={styles.buttonText}>Load from server</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.buttonContainer} onPress={deleteTasks}>
+          <AntDesign name="delete" size={24} color="white" />
+          <Text style={styles.buttonText}>Delete todos</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.buttonContainer} onPress={() => navigation.navigate('TodoAdd')}>
           <AntDesign name="plus" size={24} color="white" />
-          <Text style={styles.buttonText}>Add new task</Text>
+          <Text style={styles.buttonText}>Add new todo</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -85,22 +133,20 @@ const styles = StyleSheet.create({
     width: '90%',
     marginTop: 30,
     marginBottom: 20,
-  },  
+  },
   todoItem: {
     justifyContent: 'space-between',
     alignContent: 'center',
     flexDirection: 'row',
-    borderColor: '#ccc',
-    width: width - 20,
+    width: deviceWidth - 20,
     paddingTop: 7,
     paddingBottom: 7,
     paddingLeft: 5,
     paddingRight: 5,
-    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   todoItemText: {
     lineHeight: 22,
-    fontSize: 17
+    fontSize: 17,
   },
   todoItemDone: {
     textDecorationLine: 'line-through',
@@ -123,7 +169,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     margin: 10,
-    backgroundColor: '#222',
+    backgroundColor: theme.background,
     borderRadius: 8,
     justifyContent: 'center',
     flexDirection: 'row',
@@ -134,8 +180,8 @@ const styles = StyleSheet.create({
   buttonText: {
     margin: 10,
     fontSize: 15,
-    color: '#fff'
-  }
-})
+    color: theme.lightText,
+  },
+});
 
 export default TodoList;

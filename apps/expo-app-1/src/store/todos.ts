@@ -1,12 +1,44 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { v4 as uuidv4 } from "uuid";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { v4 as uuidv4 } from 'uuid';
+
+export interface Todo {
+  id: string;
+  title: string;
+  description: string;
+  status: TodoStatus;
+}
+
+export enum TodoStatus {
+  OPEN = 'OPEN',
+  IN_PROGRESS = 'IN_PROGRESS',
+  DONE = 'DONE',
+}
 
 const initialState = [
   {
     id: uuidv4(),
-    description: 'Add api request',
-    completed: false,
-  }
+    title: 'Add api request',
+    description: 'for all endpoints',
+    status: TodoStatus.OPEN,
+  },
+  {
+    id: uuidv4(),
+    title: 'Create add\\edit component',
+    description: 'Join edit and add screens in one',
+    status: TodoStatus.OPEN,
+  },
+  {
+    id: uuidv4(),
+    title: 'Add todo',
+    description: 'todo list',
+    status: TodoStatus.DONE,
+  },
+  {
+    id: uuidv4(),
+    title: 'Create a new project',
+    description: 'for testing',
+    status: TodoStatus.IN_PROGRESS,
+  },
 ] as Todo[];
 
 // Slice
@@ -14,6 +46,8 @@ const slice = createSlice({
   name: 'todos',
   initialState,
   reducers: {
+    addTodos: (_state, action: PayloadAction<Todo[]>) => action.payload,
+    removeTodos: () => [],
     addTodo: {
       reducer: (state, action: PayloadAction<Todo>) => {
         state.push(action.payload);
@@ -22,7 +56,7 @@ const slice = createSlice({
         payload: {
           id: uuidv4(),
           description,
-          completed: false,
+          status: TodoStatus.OPEN,
         } as Todo,
       }),
     },
@@ -30,31 +64,19 @@ const slice = createSlice({
       const index = state.findIndex((todo) => todo.id === action.payload);
       state.splice(index, 1);
     },
-    setTodoStatus(
-      state,
-      action: PayloadAction<{ completed: boolean; id: string }>
-    ) {
+    setTodoStatus(state, action: PayloadAction<{ status: TodoStatus; id: string }>) {
       const index = state.findIndex((todo) => todo.id === action.payload.id);
-      state[index].completed = action.payload.completed;
+      state[index].status = action.payload.status;
     },
-    editTodo(
-      state,
-      action: PayloadAction<Todo>
-    ) {
+    editTodo(state, action: PayloadAction<Todo>) {
       const index = state.findIndex((todo) => todo.id === action.payload.id);
       state[index] = action.payload;
     },
   },
 });
 
-export interface Todo {
-  id: string;
-  description: string;
-  completed: boolean;
-}
-
 // Actions
-export const { addTodo, removeTodo, editTodo, setTodoStatus } = slice.actions
+export const { addTodos, removeTodos, addTodo, removeTodo, editTodo, setTodoStatus } = slice.actions;
 
 // Reducer
-export default slice.reducer
+export default slice.reducer;

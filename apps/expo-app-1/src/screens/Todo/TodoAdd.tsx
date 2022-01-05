@@ -1,27 +1,20 @@
-import React, { useState } from 'react'
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  Dimensions,
-  SafeAreaView
-} from 'react-native'
-import { addTodo } from '../../store/todos'
-import { AntDesign } from '@expo/vector-icons'
-import { useAppDispatch } from '../../store'
-import { useNavigation } from '@react-navigation/core'
-import { TodoScreenNavigationProp } from '../../navigation/TodoStack'
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, TextInput, Dimensions, SafeAreaView } from 'react-native';
+import { addTodo } from '../../store/todos';
+import { AntDesign } from '@expo/vector-icons';
+import { useAppDispatch } from '../../store';
+import { useNavigation } from '@react-navigation/core';
+import { TodoScreenNavigationProp } from '../../navigation/TodoStack';
+import { theme } from '../../constants/constants';
 
-const { width } = Dimensions.get('window')
+const { width } = Dimensions.get('window');
 
 const TodoAdd = () => {
   const navigation = useNavigation<TodoScreenNavigationProp>();
 
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
-  const [value, onChangeText] = useState('')
+  const [value, onChangeText] = useState('');
 
   const addTodoItem = (value: string) => {
     if (!value) {
@@ -33,37 +26,26 @@ const TodoAdd = () => {
     onChangeText('');
 
     navigation.navigate('TodoList');
-  }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.innerContainer}>
-        <TextInput
-          style={styles.textInput}
-          onChangeText={onChangeText}
-          value={value}
-          placeholder="Add a task to do"
-        />
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={() => addTodoItem(value)}
-        >
+        <TextInput style={styles.textInput} onChangeText={onChangeText} value={value} placeholder="Add a task to do" />
+        <TouchableOpacity style={styles.buttonContainer} onPress={() => addTodoItem(value)}>
           <AntDesign name="plus" size={24} color="white" />
           <Text style={styles.buttonText}>Add task</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.innerContainer}>
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={() => navigation.navigate('TodoList')}
-        >
+        <TouchableOpacity style={styles.buttonContainer} onPress={() => navigation.navigate('TodoList')}>
           <AntDesign name="arrowleft" size={24} color="white" />
           <Text style={styles.buttonText}>Back to List</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -72,7 +54,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     width: width,
-    flexDirection: 'column',    
+    flexDirection: 'column',
   },
   innerContainer: {
     justifyContent: 'center',
@@ -85,7 +67,7 @@ const styles = StyleSheet.create({
   textInput: {
     height: 50,
     width: '100%',
-    borderColor: '#ccc',
+    borderColor: theme.border,
     borderWidth: 1,
     borderBottomLeftRadius: 8,
     borderTopLeftRadius: 8,
@@ -94,7 +76,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     margin: 10,
-    backgroundColor: '#222',
+    backgroundColor: theme.background,
     borderRadius: 8,
     justifyContent: 'center',
     flexDirection: 'row',
@@ -103,10 +85,10 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   buttonText: {
-    margin: 10,    
+    margin: 10,
     fontSize: 15,
-    color: '#fff'
-  }
-})
+    color: theme.lightText,
+  },
+});
 
 export default TodoAdd;

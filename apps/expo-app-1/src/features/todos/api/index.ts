@@ -1,7 +1,7 @@
-import { apiProvider } from './api.provider';
-import { Todo } from '../../store/todos';
+import { apiProvider } from '../../../services/api/api';
+import { Todo } from '../types';
 
-const todoProvider = apiProvider<Todo>('tasks');
+const todoProvider = apiProvider<Todo>('tasks2');
 
 export const todosApi = {
   getAll() {

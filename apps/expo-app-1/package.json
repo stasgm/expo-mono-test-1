@@ -32,19 +32,22 @@
     "react-native-reanimated": "~2.3.1",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.10.1",
+    "react-native-toast-message": "^2.1.1",
     "react-native-vector-icons": "^9.0.0",
     "react-native-web": "0.17.1",
     "react-redux": "^7.2.6",
     "uuidv4": "^6.2.12"
   },
   "devDependencies": {
-    "@libs/hello": "*",
-    "@config/prettier-config": "*",
+    "@babel/core": "^7.12.9",
     "@config/eslint-config": "*",
     "@config/eslint-config-react-native": "*",
-    "@babel/core": "^7.12.9",
+    "@config/prettier-config": "*",
+    "@libs/hello": "*",
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.64.12",
+    "@types/redux-logger": "^3.0.9",
+    "redux-logger": "^3.0.6",
     "typescript": "^4.3.5"
   },
   "lint-staged": {

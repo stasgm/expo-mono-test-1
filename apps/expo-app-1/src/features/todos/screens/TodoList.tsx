@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -6,23 +6,27 @@ import {
   TouchableOpacity,
   FlatList,
   SafeAreaView,
-  StatusBar,
   RefreshControl,
 } from 'react-native';
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
-import { fetchTodos, removeTodo, removeTodos, selectLoading, setTodoStatus, Todo, TodoStatus } from '../../store/todos';
-import { TodoScreenNavigationProp } from '../../navigation/TodoStack';
-import { useAppDispatch, useAppSelector } from '../../store';
-import { deviceWidth, theme } from '../../constants/constants';
+import { TodoScreenNavigationProp } from '../navigation/TodoStack';
+import { fetchTodos, removeTodo, removeTodos, selectStatus, setTodoStatus } from '../store';
+import { Todo, TodoStatus } from '../types';
+
+import { useAppDispatch, useAppSelector } from '../../../store';
+import { styles } from '../../../styles';
+import { deviceWidth } from '../../../constants';
 
 const TodoList = () => {
   const navigation = useNavigation<TodoScreenNavigationProp>();
 
   const dispatch = useAppDispatch();
+
   const list = useAppSelector((state) => state.todos.list);
-  const loading = useAppSelector(selectLoading);
+  const status = useAppSelector(selectStatus);
 
   const toggleTaskStatus = (item: Todo) => {
     const status =
@@ -35,7 +39,22 @@ const TodoList = () => {
   };
   const deleteTask = (item: Todo) => dispatch(removeTodo(item.id));
   const deleteTasks = () => dispatch(removeTodos());
-  const fetchData = async () => dispatch(fetchTodos());
+  const fetchData = async () => {
+    try {
+      const resp = await dispatch(fetchTodos()).unwrap();
+
+      Toast.show({
+        type: 'info',
+        text1: 'Loaded!'
+      });
+    } catch (err) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: err.message
+      });
+    }
+  }
 
   useEffect(() => {
     fetchData();
@@ -46,11 +65,11 @@ const TodoList = () => {
       <FlatList
         data={list}
         keyExtractor={(_, index) => index.toString()}
-        refreshControl={<RefreshControl refreshing={loading} title="Loading..." />}
+        refreshControl={<RefreshControl refreshing={status === 'loading'} title="Loading..." />}
         ItemSeparatorComponent={() => <View style={{ borderBottomWidth: StyleSheet.hairlineWidth }} />}
         renderItem={({ item }) => (
-          <View style={styles.todoItem}>
-            <TouchableOpacity onPress={() => toggleTaskStatus(item)} style={styles.todoDescription}>
+          <View style={localStyles.todoItem}>
+            <TouchableOpacity onPress={() => toggleTaskStatus(item)} style={localStyles.todoDescription}>
               <MaterialIcons
                 name={
                   item.status === TodoStatus.DONE
@@ -68,31 +87,31 @@ const TodoList = () => {
                       : '#dc3545'
                 }
               />
-              <Text style={[styles.todoItemText, item.status === TodoStatus.DONE ? styles.todoItemDone : null]}>
+              <Text style={[localStyles.todoItemText, item.status === TodoStatus.DONE ? localStyles.todoItemDone : null]}>
                 {item.title}
               </Text>
             </TouchableOpacity>
-            <View style={styles.itemButtonsContainer}>
-              <TouchableOpacity onPress={() => navigation.navigate('TodoEdit', { id: item.id })}>
-                <AntDesign name="edit" size={30} color="black" style={styles.itemButton} />
+            <View style={localStyles.itemButtonsContainer}>
+              <TouchableOpacity onPress={() => navigation.navigate('TodoAddEdit', { id: item.id })}>
+                <AntDesign name="edit" size={30} color="black" style={localStyles.itemButton} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => deleteTask(item)}>
-                <AntDesign name="delete" size={30} color="#dc3545" style={styles.itemButton} />
+                <AntDesign name="delete" size={30} color="#dc3545" style={localStyles.itemButton} />
               </TouchableOpacity>
             </View>
           </View>
         )}
       />
       <View style={styles.innerContainer}>
-        <TouchableOpacity style={styles.buttonContainer} onPress={fetchData} disabled={loading}>
+        <TouchableOpacity style={styles.buttonContainer} onPress={fetchData} disabled={status === 'loading'}>
           <AntDesign name="sync" size={24} color="white" />
           <Text style={styles.buttonText}>Load from server</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonContainer} onPress={deleteTasks} disabled={loading}>
+        <TouchableOpacity style={styles.buttonContainer} onPress={deleteTasks} disabled={status === 'loading'}>
           <AntDesign name="delete" size={24} color="white" />
           <Text style={styles.buttonText}>Delete todos</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonContainer} onPress={() => navigation.navigate('TodoAdd')} disabled={loading}>
+        <TouchableOpacity style={styles.buttonContainer} onPress={() => navigation.navigate('TodoAddEdit')} disabled={status === 'loading'}>
           <AntDesign name="plus" size={24} color="white" />
           <Text style={styles.buttonText}>Add new todo</Text>
         </TouchableOpacity>
@@ -101,23 +120,7 @@ const TodoList = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
-    backgroundColor: 'white',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'column',
-  },
-  innerContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-    width: '90%',
-    marginTop: 30,
-    marginBottom: 20,
-  },
+const localStyles = StyleSheet.create({
   todoItem: {
     justifyContent: 'space-between',
     alignContent: 'center',
@@ -150,21 +153,6 @@ const styles = StyleSheet.create({
   },
   itemButton: {
     padding: 4,
-  },
-  buttonContainer: {
-    margin: 10,
-    backgroundColor: theme.background,
-    borderRadius: 8,
-    justifyContent: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 50,
-    width: '100%',
-  },
-  buttonText: {
-    margin: 10,
-    fontSize: 15,
-    color: theme.lightText,
   },
 });
 

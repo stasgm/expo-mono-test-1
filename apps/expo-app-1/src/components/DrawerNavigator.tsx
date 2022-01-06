@@ -1,9 +1,12 @@
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+
 import { INavItem, RootDrawerParamList } from './types';
 import { DrawerContent } from './drawerContent';
-import { AppNavigator, MapNavigator, TodoNavigator } from '../navigation';
-import { theme } from '../constants/constants';
+import { AppNavigator, MapNavigator } from '../navigation';
+import { theme } from '../constants';
+
+import TodoNavigator from '../features/todos/navigation/TodoStack';
 
 const Drawer = createDrawerNavigator<RootDrawerParamList>();
 

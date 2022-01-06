@@ -1,7 +1,8 @@
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
-import { services } from '../../constants/constants';
-import { IApiErrorResponse, IApiResponse } from './types';
+import { services } from '../../constants';
+import storage from '../../utils/storage';
+import { IApiErrorResponse, IApiResponse, IErrorMessage } from './types';
 
 const baseAxiosConfig = {
   timeout: 300000,
@@ -17,23 +18,38 @@ const axiosConfigV1 = Object.assign(
   baseAxiosConfig,
 );
 
+function authRequestInterceptor(config: AxiosRequestConfig = {}) {
+  const token = storage.getToken();
+  if (config.headers) {
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    config.headers.Accept = 'application/json';
+  }
+  return config;
+}
+
 const handleError = (error: AxiosError): IApiErrorResponse => {
-  // const { statusCode } = error.response?.data;
+  const { statusCode } = error.response?.data;
 
-  // if (statusCode === 401) {
-  //   return { success: false, data: { error: 'No permissions' } };
-  // } else if (statusCode === 400) {
-  //   return { success: false, data: error.response?.data } as IApiErrorResponse;
-  // } else {
-  //   throw error;
-  // }
+  if (error.message === 'Network Error') {
+    return { success: false, data: { error: 'Network Error' } };
+  }
 
-  return {
-    success: false,
-    data: {
-      error: error.message,
-    },
-  };
+  if (statusCode === 401) {
+    return { success: false, data: { error: 'No permissions' } };
+  }
+
+  if (statusCode === 400) {
+    return { success: false, data: error.response?.data } as IApiErrorResponse;
+  }
+
+  if (statusCode === 500) {
+    console.log("error", error)
+    return { success: false, data: { error: error.message } } as IApiErrorResponse;
+  }
+
+  throw error;
 };
 
 const handleResponse = <T>(res: T): IApiResponse<T> => {
@@ -45,6 +61,25 @@ const handleResponse = <T>(res: T): IApiResponse<T> => {
 
 export const apiProvider = <T>(endpoint: string) => {
   const api = axios.create(axiosConfigV1);
+
+  axios.interceptors.request.use(authRequestInterceptor);
+  axios.interceptors.response.use(
+  (response) => {
+    return response.data;
+  },
+  (error) => {
+    const message = error.response?.data?.message || error.message;
+    console.log('error message', message)
+    // useNotificationStore.getState().addNotification({
+    //   type: 'error',
+    //   title: 'Error',
+    //   message,
+    // });
+
+    return Promise.reject(error);
+  },
+);
+
 
   const getCommonOptions = () => {
     return {};

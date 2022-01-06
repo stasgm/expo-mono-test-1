@@ -1,15 +1,7 @@
-type AppStackParamList = {
+export type AppStackParamList = {
   Home: undefined;
 };
 
-type MapStackParamList = {
+export type MapStackParamList = {
   MapView: undefined;
 };
-
-type TodoStackParamList = {
-  TodoList: undefined;
-  TodoAdd: undefined;
-  TodoEdit: { id: string };
-};
-
-export { AppStackParamList, MapStackParamList, TodoStackParamList };

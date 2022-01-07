@@ -57,4 +57,8 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     color: theme.lightText,
   },
+  menuButton: {
+    marginHorizontal: 10,
+    color: '#fff',
+  },
 });

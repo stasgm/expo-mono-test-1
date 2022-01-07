@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, SafeAreaView } from 'react-native';
+import { useEffect, useLayoutEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, TextInput, SafeAreaView, ActivityIndicator } from 'react-native';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 
 import { TodoScreenNavigationProp } from '../navigation/TodoStack';
 import { TodoStackParamList } from '../navigation/types';
@@ -22,8 +22,6 @@ const TodoEdit = () => {
 
   const status = useAppSelector(selectStatus);
   const error = useAppSelector(selectError);
-  // const list = useAppSelector((state) => state.todos.list);
-  // const taskToUpdate = list.find((todo) => todo.id === index);
 
   const [title, onChangeTitle] = useState('');
   const [description, onChangeDescription] = useState('');
@@ -33,8 +31,10 @@ const TodoEdit = () => {
     try {
       const item = await dispatch(fetchTodo(id)).unwrap();
       item && setTodoItem(item);
+      onChangeTitle(item?.title);
+      onChangeDescription(item?.description);
     } catch (err) {
-      console.error(err);
+      // console.error(err);
     }
   }
 
@@ -46,20 +46,25 @@ const TodoEdit = () => {
     fetchData(index);
   }, [index]);
 
-  const addOrUpdateTodoItem = () => {
-    if (!todoItem?.title) {
+  const addOrUpdateTodoItem = async () => {
+    if (!title) {
       return;
     }
-    if (todoItem) {
-      dispatch(editTodo({ ...todoItem, description, title }));
-    } else {
-      dispatch(addTodo(title, description));
+
+    try {
+      if (todoItem) {
+        await dispatch(editTodo({ ...todoItem, description, title }));
+      } else {
+        await dispatch(addTodo(title, description));
+      }
+
+      onChangeTitle('');
+      onChangeDescription('');
+
+      navigation.navigate('TodoList');
+    } catch (err) {
+      console.log('err', err);
     }
-
-    onChangeTitle('');
-    onChangeDescription('');
-
-    navigation.navigate('TodoList');
   };
 
   const deleteTodoItem = () => {
@@ -72,12 +77,22 @@ const TodoEdit = () => {
     navigation.navigate('TodoList');
   };
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: `${index ? 'Edit' : 'Add'} todo item`,
+      headerLeft: () => (
+        <MaterialIcons name="arrow-back-ios" size={30} style={styles.menuButton} onPress={navigation.goBack} />
+      ),
+    });
+  }, [navigation]);
+
   return (
     <SafeAreaView style={styles.container}>
       {status === 'loading'
         ? (
           <View style={styles.innerContainer}>
-            <Text style={styles.textCaption}>Loading</Text>
+            <ActivityIndicator size={'large'} />
+            <Text style={styles.textCaption}>Loading...</Text>
           </View>
         )
         : (status === 'error')

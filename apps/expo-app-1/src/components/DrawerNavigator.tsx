@@ -44,7 +44,7 @@ const DrawerNavigator = () => {
     <Drawer.Navigator
       defaultStatus="closed"
       screenOptions={{
-        headerShown: true,
+        headerShown: false,
         overlayColor: 'transparent',
         drawerStyle: {
           backgroundColor: theme.background,

@@ -7,10 +7,9 @@ import {
   FlatList,
   SafeAreaView,
   RefreshControl,
-  Button,
 } from 'react-native';
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, DrawerActions } from '@react-navigation/native';
 
 import { TodoScreenNavigationProp } from '../navigation/TodoStack';
 import { fetchTodos, removeTodo, removeTodos, selectStatus, setTodoStatus } from '../store';
@@ -46,15 +45,26 @@ const TodoList = () => {
     }
   }
 
+  const openDrawer = () => {
+    navigation.dispatch(DrawerActions.openDrawer());
+  }
+
   useEffect(() => {
     fetchData();
   }, []);
 
   useLayoutEffect(() => {
     navigation.setOptions({
+      headerLeft: () => (
+        <MaterialIcons name="menu" size={30} style={styles.menuButton} onPress={openDrawer}/>
+      ),
       headerRight: () => (
-        <AntDesign name="delete" size={30} color="#dc3545" style={localStyles.itemButton} />
-        // <Button onPress={() => console.log('sss') } title="Update count" />
+        <MaterialIcons
+          name="add"
+          size={30}
+          style={styles.menuButton}
+          onPress={() => navigation.navigate('TodoAddEdit')}  disabled={status === 'loading'}
+        />
       ),
     });
   }, [navigation]);
@@ -64,6 +74,7 @@ const TodoList = () => {
       <FlatList
         data={list}
         keyExtractor={(_, index) => index.toString()}
+        // onRefresh={() => fetchData}
         refreshControl={<RefreshControl refreshing={status === 'loading'} title="Loading..." />}
         ItemSeparatorComponent={() => <View style={{ borderBottomWidth: StyleSheet.hairlineWidth }} />}
         renderItem={({ item }) => (
@@ -110,10 +121,11 @@ const TodoList = () => {
           <AntDesign name="delete" size={24} color="white" />
           <Text style={styles.buttonText}>Delete todos</Text>
         </TouchableOpacity>
+        {/*
         <TouchableOpacity style={styles.buttonContainer} onPress={() => navigation.navigate('TodoAddEdit')} disabled={status === 'loading'}>
           <AntDesign name="plus" size={24} color="white" />
           <Text style={styles.buttonText}>Add new todo</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </SafeAreaView>
   );

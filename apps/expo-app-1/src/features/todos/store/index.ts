@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Action, AnyAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Todo, TodoStatus } from '../types';
@@ -13,42 +13,35 @@ type TodosState = {
 };
 
 const initialState = {
-  list:
-    [
-      {
-        id: uuidv4(),
-        title: 'Add api request',
-        description: 'for all endpoints',
-        status: TodoStatus.OPEN,
-      },
-      {
-        id: uuidv4(),
-        title: 'Create add\\edit component',
-        description: 'Join edit and add screens in one',
-        status: TodoStatus.OPEN,
-      },
-      {
-        id: uuidv4(),
-        title: 'Add todo',
-        description: 'todo list',
-        status: TodoStatus.DONE,
-      },
-      {
-        id: uuidv4(),
-        title: 'Create a new project',
-        description: 'for testing',
-        status: TodoStatus.IN_PROGRESS,
-      },
-    ] as Todo[],
+  list: [],
   status: 'idle',
   error: null,
 } as TodosState;
+
+
+interface RejectedAction extends Action {
+  error: Error
+}
+
+type StartedAction = Action;
+
+function isRejectedAction(action: AnyAction): action is RejectedAction {
+  return action.type.endsWith('rejected')
+}
+
+function isStrtedAction(action: AnyAction): action is StartedAction {
+  return action.type.endsWith('pending')
+}
 
 // Slice
 const slice = createSlice({
   name: 'todos',
   initialState,
   reducers: {
+    clearStatus(state) {
+      state.error = null;
+      state.status = 'idle';
+    },
     addTodos(state, action: PayloadAction<Todo[]>) {
       state.list = action.payload
     },
@@ -80,18 +73,13 @@ const slice = createSlice({
       const index = state.list.findIndex((todo) => todo.id === action.payload.id);
       state.list[index] = action.payload;
     },
-  },
-  extraReducers: (builder) => {
-    builder.addCase(fetchTodos.pending || fetchTodo.pending, (state) => {
+    startLoading(state) {
       state.status = 'loading';
       state.error = null;
-    }),
-    builder.addCase(fetchTodos.rejected || fetchTodo.rejected, (state, { payload }) => {
-      if (payload) {
-        state.error = payload.error;
-      };
-      state.status = 'error';
-    }),
+    }
+  },
+  extraReducers: (builder) => {
+
     builder.addCase(fetchTodos.fulfilled, (state, action) => {
       state.list = action.payload;
       state.status = 'loaded';
@@ -100,10 +88,14 @@ const slice = createSlice({
     builder.addCase(fetchTodo.fulfilled, (state, action) => {
       const index = state.list.findIndex((todo) => todo.id === action.payload.id);
       state.list[index] = action.payload
-
       state.status = 'loaded';
       state.error = null;
     });
+    builder.addMatcher(isStrtedAction, (state) => {
+      state.status = 'loading';
+      state.error = null;
+    }),
+    builder.addMatcher(isRejectedAction, (state, { error }) => { state.error = error.message; });
   },
 });
 
@@ -112,7 +104,7 @@ export const selectStatus = (state: RootState) => state.todos.status;
 export const selectError = (state: RootState) => state.todos.error;
 
 // Actions
-export const { removeTodos, addTodo, removeTodo, editTodo, setTodoStatus } = slice.actions;
+export const { removeTodos, addTodo, removeTodo, editTodo, setTodoStatus, clearStatus } = slice.actions;
 
 // Async Actions
 export { fetchTodos, fetchTodo };

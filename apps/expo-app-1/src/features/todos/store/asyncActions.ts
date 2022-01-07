@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import { AxiosError } from "axios"
+// import { AxiosError } from "axios"
 
 import { IErrorMessage } from "../../../services/api/types"
 import { todosApi } from "../api"
@@ -32,17 +32,11 @@ const fetchTodo = createAsyncThunk<Todo, string, { rejectValue: IErrorMessage }>
       if (response.success) {
         return response.data
       }
-
-      throw response.data;
       // TODO infer data type
-      // return thunkApi.rejectWithValue(response.data as IErrorMessage)
+      return thunkApi.rejectWithValue(response.data as IErrorMessage)
     } catch (err) {
-      const error: AxiosError<IErrorMessage> = err;
-      if (!error.response) {
-        throw err
-      }
-      return thunkApi.rejectWithValue(error.response.data)
-      // return thunkApi.rejectWithValue({ error: err.message } as IErrorMessage)
+      // console.error('action err', err)
+      return thunkApi.rejectWithValue({ error: err.message } as IErrorMessage)
     }
   }
 )

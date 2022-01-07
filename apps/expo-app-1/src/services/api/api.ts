@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
 import { services } from '../../constants';
-import storage from '../../utils/storage';
+// import storage from '../../utils/storage';
 import { IApiErrorResponse, IApiResponse, IErrorMessage } from './types';
 
 const baseAxiosConfig = {
@@ -19,35 +19,35 @@ const axiosConfigV1 = Object.assign(
 );
 
 function authRequestInterceptor(config: AxiosRequestConfig = {}) {
-  const token = storage.getToken();
-  if (config.headers) {
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    config.headers.Accept = 'application/json';
-  }
+  axiosLogger('request', JSON.stringify(config));
+  // const token = storage.getToken();
+  // if (config.headers) {
+  //   if (token) {
+  //     config.headers.Authorization = `Bearer ${token}`;
+  //   }
+  //   config.headers.Accept = 'application/json';
+  // }
   return config;
 }
 
-const handleError = (error: AxiosError): IApiErrorResponse => {
-  const { statusCode } = error.response?.data;
+const handleError = (error: any): IApiErrorResponse => {
+  // if (error.message === 'Network Error') {
+  //   return { success: false, data: { error: 'Network Error' } };
+  // }
 
-  if (error.message === 'Network Error') {
-    return { success: false, data: { error: 'Network Error' } };
-  }
+  // console.error('handleError', JSON.stringify(error));
+  // const { statusCode } = error.response?.data;
+  // if (statusCode === 401) {
+  //   return { success: false, data: { error: 'No permissions' } };
+  // }
 
-  if (statusCode === 401) {
-    return { success: false, data: { error: 'No permissions' } };
-  }
+  // if (statusCode === 400) {
+  //   return { success: false, data: error.response?.data } as IApiErrorResponse;
+  // }
 
-  if (statusCode === 400) {
-    return { success: false, data: error.response?.data } as IApiErrorResponse;
-  }
-
-  if (statusCode === 500) {
-    console.log("error", error)
-    return { success: false, data: { error: error.message } } as IApiErrorResponse;
-  }
+  // if (statusCode === 500) {
+  //   return { success: false, data: { error: error.message } } as IApiErrorResponse;
+  // }
 
   throw error;
 };
@@ -59,27 +59,24 @@ const handleResponse = <T>(res: T): IApiResponse<T> => {
   };
 };
 
+
+const axiosLogger = (type: string, data: any) => {
+  // console.log(`[${type}]: ${JSON.stringify(data)}`);
+}
+
 export const apiProvider = <T>(endpoint: string) => {
   const api = axios.create(axiosConfigV1);
 
-  axios.interceptors.request.use(authRequestInterceptor);
-  axios.interceptors.response.use(
-  (response) => {
-    return response.data;
-  },
-  (error) => {
-    const message = error.response?.data?.message || error.message;
-    console.log('error message', message)
-    // useNotificationStore.getState().addNotification({
-    //   type: 'error',
-    //   title: 'Error',
-    //   message,
-    // });
-
+  api.interceptors.request.use(authRequestInterceptor, (error) => axiosLogger('response-err', error));
+  api.interceptors.response.use((response) => {
+    axiosLogger('response', response);
+    return response;
+  }, (error) => {
+    axiosLogger('response-err', error);
+    // const message = error.response?.data?.message || error.message;
+    // console.log('error message: ', message)
     return Promise.reject(error);
-  },
-);
-
+  });
 
   const getCommonOptions = () => {
     return {};
@@ -94,16 +91,16 @@ export const apiProvider = <T>(endpoint: string) => {
     }
   };
 
-  const get = async (options = {}): Promise<IApiResponse<T> | IApiErrorResponse> => {
+  const get = async (id: string, options = {}): Promise<IApiResponse<T> | IApiErrorResponse> => {
     try {
-      const res = await axios.get<T>(`${endpoint}`, { ...options, ...getCommonOptions() });
+      const res = await api.get<T>(`${endpoint}/${id}`, { ...options, ...getCommonOptions() });
       return handleResponse<T>(res.data);
     } catch (error) {
-      return handleError(error as AxiosError);
+      return handleError(error);
     }
   };
 
-  const post = async (endpoint: string, data = {}, options = {}): Promise<IApiResponse<T> | IApiErrorResponse> => {
+  const post = async (data = {}, options = {}): Promise<IApiResponse<T> | IApiErrorResponse> => {
     try {
       const res = await api.post<T>(`${endpoint}`, data, { ...options, ...getCommonOptions() });
       return handleResponse<T>(res.data);
@@ -112,18 +109,18 @@ export const apiProvider = <T>(endpoint: string) => {
     }
   };
 
-  const remove = async (options = {}): Promise<IApiResponse<T> | IApiErrorResponse> => {
+  const remove = async (id: string, options = {}): Promise<IApiResponse<T> | IApiErrorResponse> => {
     try {
-      const res = await axios.delete<T>(`${endpoint}`, { ...options, ...getCommonOptions() });
+      const res = await axios.delete<T>(`${endpoint}/${id}`, { ...options, ...getCommonOptions() });
       return handleResponse<T>(res.data);
     } catch (error) {
       return handleError(error as AxiosError);
     }
   };
 
-  const patch = async (data = {}, options = {}): Promise<IApiResponse<T> | IApiErrorResponse> => {
+  const patch = async (id: string, data = {}, options = {}): Promise<IApiResponse<T> | IApiErrorResponse> => {
     try {
-      const res = await axios.patch<T>(`${endpoint}`, data, { ...options, ...getCommonOptions() });
+      const res = await axios.patch<T>(`${endpoint}/${id}`, data, { ...options, ...getCommonOptions() });
       return handleResponse<T>(res.data);
     } catch (error) {
       return handleError(error as AxiosError);

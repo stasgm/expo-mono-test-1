@@ -1,7 +1,7 @@
 import { apiProvider } from '../../../services/api/api';
 import { Todo } from '../types';
 
-const todoProvider = apiProvider<Todo>('tasks2');
+const todoProvider = apiProvider<Todo>('tasks');
 
 export const todosApi = {
   getAll() {
@@ -11,10 +11,10 @@ export const todosApi = {
     return todoProvider.get(id);
   },
   post(item: Todo) {
-    return todoProvider.get(item);
+    return todoProvider.post(item);
   },
-  patch(item: Todo) {
-    return todoProvider.patch(item);
+  patch(id: string, item: Todo) {
+    return todoProvider.patch(id, item);
   },
   delete(id: string) {
     return todoProvider.remove(id);

@@ -8,6 +8,8 @@ const { width: deviceWidth } = Dimensions.get('window');
 
 const theme = {
   background: '#465775',
+  primary: '#261',
+  secondary: '#246',
   active: '#F4F7FB',
   inactive: '#ADB6C4',
   disabled: 'grey',

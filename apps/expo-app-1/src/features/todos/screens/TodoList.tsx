@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -7,10 +7,10 @@ import {
   FlatList,
   SafeAreaView,
   RefreshControl,
+  Button,
 } from 'react-native';
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import Toast from 'react-native-toast-message';
 
 import { TodoScreenNavigationProp } from '../navigation/TodoStack';
 import { fetchTodos, removeTodo, removeTodos, selectStatus, setTodoStatus } from '../store';
@@ -42,23 +42,22 @@ const TodoList = () => {
   const fetchData = async () => {
     try {
       const resp = await dispatch(fetchTodos()).unwrap();
-
-      Toast.show({
-        type: 'info',
-        text1: 'Loaded!'
-      });
     } catch (err) {
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: err.message
-      });
     }
   }
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <AntDesign name="delete" size={30} color="#dc3545" style={localStyles.itemButton} />
+        // <Button onPress={() => console.log('sss') } title="Update count" />
+      ),
+    });
+  }, [navigation]);
 
   return (
     <SafeAreaView style={styles.container}>

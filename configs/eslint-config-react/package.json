@@ -1,0 +1,12 @@
+{
+  "name": "@config/eslint-config-react",
+  "version": "1.0.0",
+  "description": "ESlint configs for react projects",
+  "license": "MIT",
+  "main": "index.js",
+  "dependencies": {
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-react": "^7.29.4",
+    "eslint-plugin-react-hooks": "^4.4.0"
+  }
+}

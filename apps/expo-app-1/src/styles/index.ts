@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+
 import { deviceWidth, theme } from '../constants';
 
 export const styles = StyleSheet.create({

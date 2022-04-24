@@ -1,24 +1,29 @@
-import { StyleSheet, View } from 'react-native';
+/* eslint-disable react-native/no-unused-styles */
+import { StyleSheet, Animated } from 'react-native';
 import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
   DrawerItemList,
-  useDrawerProgress,
+  // DrawerItemList,
+  // useDrawerProgress,
 } from '@react-navigation/drawer';
-import Animated, { Adaptable } from 'react-native-reanimated';
+// import Animated, { useSharedValue, useAnimatedStyle } from 'react-native-reanimated';
 
 export function DrawerContent({ ...props }: DrawerContentComponentProps) {
-  const progress = useDrawerProgress() as Adaptable<number>;
+  // const progress = useDrawerProgress() as Adaptable<number>;
 
-  const translateX = Animated.interpolateNode(progress, {
-    inputRange: [0, 0.5, 0.7, 0.8, 1],
-    outputRange: [-100, -85, -70, -45, 0],
-  });
+  // const translateX = Animated.interpolateNode(progress, {
+  //   inputRange: [0, 0.5, 0.7, 0.8, 1],
+  //   outputRange: [-100, -85, -70, -45, 0],
+  // });
 
   return (
     <>
       <DrawerContentScrollView {...props}>
-        <Animated.View
+        <Animated.View style={[styles.drawerContent]}>
+          <DrawerItemList {...props} />
+        </Animated.View>
+        {/* <Animated.View
           style={[
             styles.drawerContent,
             {
@@ -27,7 +32,7 @@ export function DrawerContent({ ...props }: DrawerContentComponentProps) {
           ]}
         >
           <DrawerItemList {...props} />
-        </Animated.View>
+        </Animated.View> */}
       </DrawerContentScrollView>
     </>
   );

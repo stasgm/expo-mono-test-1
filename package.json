@@ -11,12 +11,13 @@
     "configs/*"
   ],
   "scripts": {
-    "app:expo": "lerna run --scope=@apps/@apps/expo-app-1 expo:start --stream",
+    "app:expo": "lerna run --scope=@apps/expo-app-1 start --stream",
     "clean": "lerna clean",
-    "clean:all": "yarn clean:node-modules && yarn clean:expo-cache && yarn clean:dist",
+    "clean:all": "yarn clean:node-modules && yarn clean:expo-cache",
     "clean:dist": "rimraf packages/*/dist && rimraf apps/*/dist && apps/*/build && rimraf configs/*/dist",
     "clean:expo-cache": "rimraf apps/*/.expo packages/*/.expo",
     "clean:node-modules": "rimraf node_modules && rimraf apps/*/node_modules && rimraf packages/*/node_modules && rimraf configs/*/node_modules",
+    "build:lib": "lerna run --scope=@lib/* build --stream",
     "postinstall": "patch-package && husky install",
     "lerna": "lerna bootstrap",
     "lint": "lerna run --scope=@lib/* --scope=@apps/* lint --stream",
@@ -35,11 +36,15 @@
   "prettier": "@config/prettier-config",
   "devDependencies": {
     "@config/prettier-config": "*",
-    "concurrently": "^7.0.0",
+    "concurrently": "^7.1.0",
     "husky": "^7.0.4",
     "lerna": "^4.0.0",
-    "lint-staged": "^12.1.5",
+    "lint-staged": "^12.4.0",
     "patch-package": "^6.4.7",
-    "sort-package-json": "1.53.1"
+    "sort-package-json": "1.55.0"
+  },
+  "resolutions": {
+    "@types/react": "17.0.2",
+    "@types/react-dom": "17.0.2"
   }
 }

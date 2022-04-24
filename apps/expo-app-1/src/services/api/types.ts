@@ -18,6 +18,6 @@ export interface INetworkError {
 }
 
 export type ValidationErrors = {
-  errorMessage: string,
-  fieldErrors: Record<string, string>
-}
+  errorMessage: string;
+  fieldErrors: Record<string, string>;
+};

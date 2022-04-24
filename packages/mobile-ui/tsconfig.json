@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "jsx": "react-native"
+  },
+  "include": ["src", "index.ts", "../../apps/app-trade-agents/src/components/SwipeListItem.tsx", "../../apps/app-trade-agents/src/components/SwipeLineItem.tsx"],
+  "exclude": ["node_modules"]
+}

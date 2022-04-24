@@ -36,10 +36,11 @@ export function DrawerContent({ onSync, syncing, ...props }: Props) {
   const progress = useDrawerProgress() as Animated.Node<number>;
 
   // TODO: something wrong
-  // const translateX = Animated.interpolateNode(progress, {
-  //   inputRange: [0, 0.5, 0.7, 0.8, 1],
-  //   outputRange: [-100, -85, -70, -45, 0],
-  // });
+  console.log(`progress: ${progress}`);
+  const translateX = Animated.interpolateNode(progress, {
+    inputRange: [0, 0.5, 0.7, 0.8, 1],
+    outputRange: [-100, -85, -70, -45, 0],
+  });
 
   const syncDate = useSelector((state) => state.app.syncDate) as Date;
 

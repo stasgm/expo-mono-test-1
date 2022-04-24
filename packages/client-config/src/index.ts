@@ -37,13 +37,15 @@ const getConfig = () => {
       break;
   }
 
-  return {
+  const configWithDebug = {
     ...config,
     debug: {
       useMockup: process.env.MOCK ? process.env.MOCK === 'true' : config.debug.useMockup,
       //deviceId: (process.env.DEVICE_ID || config.debug.deviceId || '').toUpperCase(),
     },
   };
+
+  return configWithDebug;
 };
 
 export default getConfig();

@@ -1,4 +1,4 @@
-import { IEntity } from './common';
+import { IEntity, ISortEntity } from './common';
 
 export type SettingValue = string | number | boolean;
 
@@ -8,6 +8,7 @@ interface ISettingsOption<T = SettingValue> extends IEntity {
   visible?: boolean;
   sortOrder?: number;
   type: 'string' | 'date' | 'number' | 'boolean' | 'option' | 'ref';
+  group?: ISortEntity;
 }
 
 type Settings<T = Record<string, SettingValue>> = {
@@ -48,5 +49,24 @@ const InvSettings: Settings<IInvSettings> =  {
     type: 'boolean',
   },
 }; */
+
+// export type SettingValueDoc = string | number | boolean | undefined;
+// export type RefTypeChoose = 'string' | 'date' | 'number' | 'boolean' | 'option' | 'ref';
+
+// interface ISettingsOptionDoc extends IEntity {
+//   description: string;
+//   type: RefTypeChoose;
+//   refName?: string;
+//   sortOrder?: number;
+//   clearInput?: boolean;
+//   disabled?: boolean;
+//   onChangeText?: string;
+//   value?: any;
+//   requeried?: boolean;
+// }
+
+// type MetaData1<T = Record<string, SettingValueDoc>> = {
+//   [P in keyof T]?: ISettingsOptionDoc<T[P]>;
+// };
 
 export { Settings, ISettingsOption, IBaseSettings };

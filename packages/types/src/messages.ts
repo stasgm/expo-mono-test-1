@@ -96,3 +96,24 @@ export interface IDBHeadMessage extends Omit<IHeadMessage, 'company' | 'producer
 export interface IDBMessage<T = any> extends Omit<IMessage<T>, 'head'> {
   head: IDBHeadMessage;
 }
+
+export interface IFileMessageInfo {
+  id: string;
+  producer: string;
+  consumer: string;
+}
+
+export interface ICheckTransafer {
+  state: boolean;
+}
+
+export interface ITransfer {
+  uid: string;
+  uDate: string;
+}
+
+export type Transfer = ITransfer | undefined;
+
+export type ITransferReq = {
+  uid: string;
+};

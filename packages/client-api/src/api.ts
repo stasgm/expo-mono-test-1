@@ -101,6 +101,7 @@ class Api extends BaseApi {
         throw error;
       },
     );
+    return;
   }
 }
 

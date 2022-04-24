@@ -56,6 +56,7 @@ const DrawerNavigator = ({ onSyncClick, ...props }: IProps) => {
           component={item.component}
           // initialParams={{ titleDoc: item.title }}
           options={{
+            headerShown: false,
             title: item.title,
             drawerIcon: (pr) => <Icon name={item.icon} {...pr} />,
             // gestureEnabled: !loading,

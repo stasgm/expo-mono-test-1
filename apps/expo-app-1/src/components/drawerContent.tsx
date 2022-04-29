@@ -1,43 +1,51 @@
 /* eslint-disable react-native/no-unused-styles */
+// import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import {
-  DrawerContentComponentProps,
-  DrawerContentScrollView,
-  DrawerItemList,
-  useDrawerProgress,
-} from '@react-navigation/drawer';
+import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import Animated from 'react-native-reanimated';
 
-export function DrawerContent({ ...props }: DrawerContentComponentProps) {
-  const progress = useDrawerProgress() as Animated.Node<number>;
+export const DrawerContent = (props: DrawerContentComponentProps) => {
+  // const progress = useDrawerProgress() as Animated.Adaptable<number>;
+  // const status = useDrawerStatus();
 
-  const translateX = Animated.interpolateNode(progress, {
-    inputRange: [0, 0.5, 0.7, 0.8, 1],
-    outputRange: [-100, -85, -70, -45, 0],
-  });
+  // const scale = Animated.interpolateNode(status === 'open' ? 1 : 0, {
+  //   inputRange: [0, 1],
+  //   outputRange: [1, 0.8],
+  //   extrapolate: Animated.Extrapolate.CLAMP,
+  // });
+
+  // const translateX = Animated.interpolateNode(progress, {
+  //   inputRange: [0, 0.5, 0.7, 0.8, 1],
+  //   outputRange: [-100, -85, -70, -45, 0],
+  //   extrapolate: Animated.Extrapolate.CLAMP,
+  // });
+
+  // const translateX = Animated.interpolateNode(status === 'open' ? 1 : 0, {
+  //   inputRange: [0, 0.5, 0.7, 0.8, 1],
+  //   outputRange: [-100, -85, -70, -45, 0],
+  //   extrapolate: Animated.Extrapolate.CLAMP,
+  // });
 
   return (
-    <>
-      <DrawerContentScrollView {...props}>
+    <DrawerContentScrollView {...props}>
+      <Animated.View
+        style={[
+          styles.drawerContent,
+          // {
+          //   transform: [{ translateX }],
+          // },
+        ]}
+      >
         <DrawerItemList {...props} />
-        <Animated.View
-          style={[
-            styles.drawerContent,
-            {
-              transform: [{ translateX }],
-            },
-          ]}
-        >
-          <DrawerItemList {...props} />
-        </Animated.View>
-      </DrawerContentScrollView>
-    </>
+      </Animated.View>
+    </DrawerContentScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   drawerContent: {
     flex: 1,
+    overflow: 'hidden',
   },
   userInfoSection: {
     paddingLeft: 20,

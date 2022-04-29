@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-unused-styles */
-import { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import Animated, { withTiming, useSharedValue, useAnimatedStyle } from 'react-native-reanimated';
 

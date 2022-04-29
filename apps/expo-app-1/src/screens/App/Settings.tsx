@@ -1,13 +1,14 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { withTheme, Text } from '@rneui/themed';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Header } from '@lib/mob-ui';
 
-const MapViewScreen = () => {
+const SettingsScreen = () => {
   return (
     <SafeAreaProvider>
-      <Header title="Home screen" />
+      <Header title="Settings" />
       <View style={styles.container}>
-        <Text>There will be a map</Text>
+        <Text>Settings</Text>
       </View>
     </SafeAreaProvider>
   );
@@ -22,4 +23,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MapViewScreen;
+export default withTheme(SettingsScreen);

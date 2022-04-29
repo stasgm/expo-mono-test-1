@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, SafeAreaView, ActivityIndicator } from 'react-native';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 
-import { TodoScreenNavigationProp } from '../navigation/TodoStack';
+import { Header } from '@lib/mob-ui';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
+
+import { TodoScreenNavigationProp } from '../navigation/TodoNavigator';
 import { TodoStackParamList } from '../navigation/types';
 import { Todo } from '../types';
 import { createTodo, fetchTodo, deleteTodo, selectError, selectStatus, updateTodo } from '../store';
@@ -84,78 +86,75 @@ const TodoEdit = () => {
     }
   };
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: `${index ? 'Edit' : 'Add'} todo item`,
-      headerLeft: () => (
-        <MaterialIcons name="arrow-back-ios" size={30} style={styles.menuButton} onPress={navigation.goBack} />
-      ),
-    });
-  }, [index, navigation]);
-
   return (
-    <SafeAreaView style={styles.container}>
-      {status === 'loading' ? (
-        <View style={styles.innerContainer}>
-          <ActivityIndicator size={'large'} />
-          <Text style={styles.textCaption}>Loading...</Text>
-        </View>
-      ) : status === 'error' ? (
-        <View style={styles.innerContainer}>
-          <Text style={styles.textCaption}>{JSON.stringify(error)}</Text>
-        </View>
-      ) : (
-        <View style={styles.innerContainer}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.textCaption}>Title:</Text>
-            <TextInput style={styles.textInput} onChangeText={onChangeTitle} value={title} placeholder="Title" />
+    <>
+      <Header
+        title={`${index ? 'Edit' : 'Add'} todo item`}
+        leftAction={{ icon: 'arrow-left', action: navigation.goBack }}
+      />
+      <SafeAreaView style={styles.container}>
+        {status === 'loading' ? (
+          <View style={styles.innerContainer}>
+            <ActivityIndicator size={'large'} />
+            <Text style={styles.textCaption}>Loading...</Text>
           </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.textCaption}>Description:</Text>
-            <TextInput
-              style={styles.textInput}
-              onChangeText={onChangeDescription}
-              value={description}
-              placeholder="Description"
-            />
+        ) : status === 'error' ? (
+          <View style={styles.innerContainer}>
+            <Text style={styles.textCaption}>{JSON.stringify(error)}</Text>
           </View>
-          <TouchableOpacity style={styles.buttonContainer} onPress={addOrUpdateTodoItem} disabled={status !== 'idle'}>
-            {status === 'posting' ? (
-              <>
-                <ActivityIndicator size={'small'} />
-                <Text style={styles.buttonText}>Saving...</Text>
-              </>
-            ) : (
-              <>
-                <AntDesign name="save" size={24} color="white" />
-                <Text style={styles.buttonText}>Save</Text>
-              </>
-            )}
-          </TouchableOpacity>
-          {todoItem && (
-            <TouchableOpacity style={styles.buttonContainer} onPress={deleteTodoItem} disabled={status !== 'idle'}>
-              {status === 'deleting' ? (
+        ) : (
+          <View style={styles.innerContainer}>
+            <View style={styles.inputContainer}>
+              <Text style={styles.textCaption}>Title:</Text>
+              <TextInput style={styles.textInput} onChangeText={onChangeTitle} value={title} placeholder="Title" />
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.textCaption}>Description:</Text>
+              <TextInput
+                style={styles.textInput}
+                onChangeText={onChangeDescription}
+                value={description}
+                placeholder="Description"
+              />
+            </View>
+            <TouchableOpacity style={styles.buttonContainer} onPress={addOrUpdateTodoItem} disabled={status !== 'idle'}>
+              {status === 'posting' ? (
                 <>
                   <ActivityIndicator size={'small'} />
-                  <Text style={styles.buttonText}>Deleting...</Text>
+                  <Text style={styles.buttonText}>Saving...</Text>
                 </>
               ) : (
                 <>
-                  <AntDesign name="delete" size={24} color="white" />
-                  <Text style={styles.buttonText}>Delete</Text>
+                  <Icon name="content-save" size={30} color="white" />
+                  <Text style={styles.buttonText}>Save</Text>
                 </>
               )}
             </TouchableOpacity>
-          )}
-        </View>
-      )}
-      {/* <View style={styles.innerContainer}>
+            {todoItem && (
+              <TouchableOpacity style={styles.buttonContainer} onPress={deleteTodoItem} disabled={status !== 'idle'}>
+                {status === 'deleting' ? (
+                  <>
+                    <ActivityIndicator size={'small'} />
+                    <Text style={styles.buttonText}>Deleting...</Text>
+                  </>
+                ) : (
+                  <>
+                    <Icon name="delete" size={24} color="white" />
+                    <Text style={styles.buttonText}>Delete</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+        {/* <View style={styles.innerContainer}>
         <TouchableOpacity style={styles.buttonContainer} onPress={() => navigation.navigate('TodoList')}>
           <AntDesign name="arrowleft" size={24} color="white" />
           <Text style={styles.buttonText}>Back to List</Text>
         </TouchableOpacity>
       </View> */}
-    </SafeAreaView>
+      </SafeAreaView>
+    </>
   );
 };
 

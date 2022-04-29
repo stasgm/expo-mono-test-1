@@ -62,19 +62,19 @@ const handleResponse = <T>(res: T): IApiResponse<T> => {
 };
 
 const axiosLogger = (type: string, data: any) => {
-  console.log(`[${type}]: ${JSON.stringify(data)}`);
+  // console.log(`[${type}]: ${JSON.stringify(data)}`);
 };
 
 export const apiProvider = <T>(endpoint: string) => {
   const api = axios.create(axiosConfigV1);
 
-  api.interceptors.request.use(authRequestInterceptor, (error) => axiosLogger('response-err', error));
+  api.interceptors.request.use(authRequestInterceptor, (error: any) => axiosLogger('response-err', error));
   api.interceptors.response.use(
-    (response) => {
+    (response: any) => {
       axiosLogger('response', response);
       return response;
     },
-    (error) => {
+    (error: any) => {
       axiosLogger('response-err', error);
       // const message = error.response?.data?.message || error.message;
       // console.log('error message: ', message)

@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useLayoutEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, FlatList, SafeAreaView, RefreshControl } from 'react-native';
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
-import { useNavigation, DrawerActions } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
-import { AddButton, DrawerButton } from '@lib/mobile-ui';
+import { Header } from '@lib/mob-ui';
 
-import { TodoScreenNavigationProp } from '../navigation/TodoStack';
+import { TodoScreenNavigationProp } from '../navigation/TodoNavigator';
 import { deleteTodo, fetchTodos, selectStatus, setTodoStatus } from '../store';
 import { Todo, TodoStatus } from '../types';
 
@@ -46,82 +46,64 @@ const TodoList = () => {
     }
   }, [dispatch]);
 
-  const openDrawer = useCallback(() => {
-    navigation.dispatch(DrawerActions.openDrawer());
-  }, [navigation]);
-
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerLeft: () => <DrawerButton />,
-      // headerLeft: () => <MaterialIcons name="menu" size={30} style={styles.menuButton} onPress={openDrawer} />,
-      headerRight: () => (
-        // <MaterialIcons
-        <AddButton
-          // name="add"
-          // size={30}
-          // style={styles.menuButton}
-          onPress={() => navigation.navigate('TodoAddEdit')}
-          // disabled={status === 'loading'}
-        />
-      ),
-    });
-  }, [navigation, openDrawer, status]);
-
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        data={list}
-        keyExtractor={(_, index) => index.toString()}
-        refreshControl={<RefreshControl onRefresh={fetchData} refreshing={status === 'loading'} title="Loading..." />}
-        ItemSeparatorComponent={() => <View style={{ borderBottomWidth: StyleSheet.hairlineWidth }} />}
-        renderItem={({ item }) => (
-          <View style={localStyles.todoItem}>
-            <TouchableOpacity onPress={() => toggleTaskStatus(item)} style={localStyles.todoDescription}>
-              <MaterialIcons
-                name={
-                  item.status === TodoStatus.DONE
-                    ? 'check-circle'
-                    : item.status === TodoStatus.IN_PROGRESS
-                    ? 'radio-button-on'
-                    : 'radio-button-unchecked'
-                }
-                size={30}
-                color={
-                  item.status === TodoStatus.DONE
-                    ? '#28a745'
-                    : item.status === TodoStatus.IN_PROGRESS
-                    ? '#0035dd'
-                    : '#dc3545'
-                }
-              />
-              <Text
-                style={[localStyles.todoItemText, item.status === TodoStatus.DONE ? localStyles.todoItemDone : null]}
-              >
-                {item.title}
-              </Text>
-            </TouchableOpacity>
-            <View style={localStyles.itemButtonsContainer}>
-              <TouchableOpacity onPress={() => navigation.navigate('TodoAddEdit', { id: item.id })}>
-                <AntDesign name="edit" size={30} color="black" style={localStyles.itemButton} />
+    <>
+      <Header title="To do list" rightAction={{ icon: 'plus', action: () => navigation.navigate('TodoAddEdit') }} />
+      <SafeAreaView style={styles.container}>
+        <FlatList
+          data={list}
+          keyExtractor={(_, index) => index.toString()}
+          refreshControl={<RefreshControl onRefresh={fetchData} refreshing={status === 'loading'} title="Loading..." />}
+          ItemSeparatorComponent={() => <View style={{ borderBottomWidth: StyleSheet.hairlineWidth }} />}
+          renderItem={({ item }) => (
+            <View style={localStyles.todoItem}>
+              <TouchableOpacity onPress={() => toggleTaskStatus(item)} style={localStyles.todoDescription}>
+                <MaterialIcons
+                  name={
+                    item.status === TodoStatus.DONE
+                      ? 'check-circle'
+                      : item.status === TodoStatus.IN_PROGRESS
+                      ? 'radio-button-on'
+                      : 'radio-button-unchecked'
+                  }
+                  size={30}
+                  color={
+                    item.status === TodoStatus.DONE
+                      ? '#28a745'
+                      : item.status === TodoStatus.IN_PROGRESS
+                      ? '#0035dd'
+                      : '#dc3545'
+                  }
+                />
+                <Text
+                  style={[localStyles.todoItemText, item.status === TodoStatus.DONE ? localStyles.todoItemDone : null]}
+                >
+                  {item.title}
+                </Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => deleteTask(item)}>
-                <AntDesign name="delete" size={30} color="#dc3545" style={localStyles.itemButton} />
-              </TouchableOpacity>
+              <View style={localStyles.itemButtonsContainer}>
+                <TouchableOpacity onPress={() => navigation.navigate('TodoAddEdit', { id: item.id })}>
+                  <AntDesign name="edit" size={30} color="black" style={localStyles.itemButton} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => deleteTask(item)}>
+                  <AntDesign name="delete" size={30} color="#dc3545" style={localStyles.itemButton} />
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        )}
-      />
-      <View style={styles.innerContainer}>
-        {/* <TouchableOpacity style={styles.buttonContainer} onPress={deleteTasks} disabled={status === 'loading'}>
-          <AntDesign name="delete" size={24} color="white" />
-          <Text style={styles.buttonText}>Delete todos</Text>
-        </TouchableOpacity> */}
-      </View>
-    </SafeAreaView>
+          )}
+        />
+        <View style={styles.innerContainer}>
+          {/* <TouchableOpacity style={styles.buttonContainer} onPress={deleteTasks} disabled={status === 'loading'}>
+      <AntDesign name="delete" size={24} color="white" />
+      <Text style={styles.buttonText}>Delete todos</Text>
+    </TouchableOpacity> */}
+        </View>
+      </SafeAreaView>
+    </>
   );
 };
 

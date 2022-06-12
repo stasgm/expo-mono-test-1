@@ -3,9 +3,10 @@ module.exports = {
   extends: ['@react-native-community'],
   plugins: ['react-native'],
   env: {
+    browser: true,
     es6: true,
-    node: true,
     'react-native/react-native': true,
+    jest: true,
   },
   parserOptions: {
     ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features
@@ -21,6 +22,23 @@ module.exports = {
     'react-native/no-inline-styles': 'warn',
     'react-native/no-color-literals': 'off',
     'react-native/no-raw-text': 'off',
+    'no-restricted-imports': [
+      'error',
+      {
+        paths: [
+          {
+            name: 'react-native',
+            importNames: ['Text', 'TextInput', 'Alert'],
+          },
+          {
+            name: '@ui-kitten/components',
+            importNames: ['Icon', 'Button'],
+            message: 'use base components',
+          },
+          { name: 'expo-constants', message: 'Use MyConstants' },
+        ],
+      },
+    ],
   },
   globals: {
     fetch: false,

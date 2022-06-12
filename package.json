@@ -1,10 +1,10 @@
 {
   "name": "expo-mono-test-1",
   "version": "1.0.0",
-  "main": "index.js",
-  "author": "Stanislau Shlyahtich <stanislau.shlyahtich@sprintingsoftware.com>",
-  "license": "MIT",
   "private": true,
+  "license": "MIT",
+  "author": "Stanislau Shlyahtich <stanislau.shlyahtich@sprintingsoftware.com>",
+  "main": "index.js",
   "workspaces": [
     "apps/*",
     "packages/*",
@@ -12,12 +12,12 @@
   ],
   "scripts": {
     "app:expo": "lerna run --scope=@apps/expo-app-1 start --stream",
+    "build:lib": "lerna run --scope=@lib/* build --stream",
     "clean": "lerna clean",
     "clean:all": "yarn clean:node-modules && yarn clean:expo-cache",
     "clean:dist": "rimraf packages/*/dist && rimraf apps/*/dist && apps/*/build && rimraf configs/*/dist",
     "clean:expo-cache": "rimraf apps/*/.expo packages/*/.expo",
     "clean:node-modules": "rimraf node_modules && rimraf apps/*/node_modules && rimraf packages/*/node_modules && rimraf configs/*/node_modules",
-    "build:lib": "lerna run --scope=@lib/* build --stream",
     "postinstall": "patch-package && husky install",
     "lerna": "lerna bootstrap",
     "lint": "lerna run --scope=@lib/* --scope=@apps/* lint --stream",
@@ -34,17 +34,17 @@
     ]
   },
   "prettier": "@config/prettier-config",
-  "devDependencies": {
-    "@config/prettier-config": "*",
-    "concurrently": "^7.1.0",
-    "husky": "^7.0.4",
-    "lerna": "^4.0.0",
-    "lint-staged": "^12.4.0",
-    "patch-package": "^6.4.7",
-    "sort-package-json": "1.55.0"
-  },
   "resolutions": {
     "@types/react": "17.0.2",
     "@types/react-dom": "17.0.2"
+  },
+  "devDependencies": {
+    "@config/prettier-config": "*",
+    "concurrently": "^7.2.1",
+    "husky": "^8.0.1",
+    "lerna": "^5.1.1",
+    "lint-staged": "^13.0.1",
+    "patch-package": "^6.4.7",
+    "sort-package-json": "1.57.0"
   }
 }

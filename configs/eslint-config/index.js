@@ -1,11 +1,21 @@
 module.exports = {
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser
   // plugins: ['import', 'promise', '@typescript-eslint', 'prettier', 'sonarjs'],
-  plugins: ['import', 'promise', '@typescript-eslint', 'prettier'],
+  plugins: [
+    'import',
+    'promise',
+    '@typescript-eslint',
+    'prettier',
+    'filenames',
+    'restrict-imports'
+  ],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:import/typescript',
+    'plugin:@typescript-eslint/eslint-recommended',
     'plugin:promise/recommended',
+    'plugin:import/recommended',
     // 'plugin:sonarjs/recommended',
     'plugin:prettier/recommended',
     'plugin:import/errors',
@@ -16,16 +26,17 @@ module.exports = {
     node: true,
   },
   parserOptions: {
-    ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features
+    ecmaVersion: 12, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module', // Allows for the use of imports
   },
   rules: {
     // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
     // e.g. '@typescript-eslint/explicit-function-return-type': 'off',
-    indent: 'off',
+    'indent': 'off',
     'import/named': 'off',
-    quotes: [2, 'single', 'avoid-escape'],
+    'quotes': [2, 'single', 'avoid-escape'],
     'no-console': 'off',
+    "no-shadow": 'off',
     'import/first': 'warn',
     'import/namespace': ['error', { allowComputed: true }],
     'import/no-duplicates': 'error',
@@ -40,7 +51,12 @@ module.exports = {
     'max-len': ['error', { code: 120 }],
     'no-nested-ternary': 'off',
     'no-use-before-define': 'off',
+    'comma-dangle': 'off',
+    'padded-blocks': 'off',
+    'arrow-body-style': 'off',
     '@typescript-eslint/camelcase': ['off', { ignoreDestructuring: true }],
+    // "@typescript-eslint/no-shadow": ['error', , { ignoreTypeValueShadow: true }],
+    "@typescript-eslint/no-shadow": ['error', { ignoreTypeValueShadow: true }],
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-member-accessibility': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
@@ -58,6 +74,7 @@ module.exports = {
     // "sonarjs/no-duplicate-string": "off",
     'padded-blocks': ['error', 'never'],
     'no-await-in-loop': 'error',
+
     'prettier/prettier': [
       'error',
       {

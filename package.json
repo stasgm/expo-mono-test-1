@@ -11,7 +11,7 @@
     "configs/*"
   ],
   "scripts": {
-    "app:expo": "lerna run --scope=@apps/expo-app-1 start --stream",
+    "app:expo": "lerna run --scope=@apps/expo-app-3 start --stream",
     "build:lib": "lerna run --scope=@lib/* build --stream",
     "clean": "lerna clean",
     "clean:all": "yarn clean:node-modules && yarn clean:expo-cache",
